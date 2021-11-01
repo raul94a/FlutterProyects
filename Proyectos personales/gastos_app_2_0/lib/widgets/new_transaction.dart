@@ -3,8 +3,8 @@ import 'package:intl/intl.dart' as intl;
 
 class NewTransaction extends StatefulWidget {
   Function(String, String, DateTime?)? addNewTransaction;
-
-  NewTransaction(this.addNewTransaction);
+  final appBarAndPaddingHeight;
+  NewTransaction(this.addNewTransaction, this.appBarAndPaddingHeight);
 
   @override
   State<NewTransaction> createState() => _NewTransactionState();
@@ -38,8 +38,11 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
+    final _screenSize = MediaQuery.of(context).size.height;
+    final availableHeight = _screenSize - widget.appBarAndPaddingHeight;
+
     return Container(
-      height: 450,
+      height: availableHeight * 0.7,
       margin: EdgeInsets.symmetric(horizontal: 0, vertical: 3),
       child: Card(
         elevation: 5,
@@ -60,7 +63,7 @@ class _NewTransactionState extends State<NewTransaction> {
                 controller: _inputTitle,
               ),
             ),
-            Container(
+            Padding(
               padding: const EdgeInsets.all(5.0),
               child: TextField(
                 decoration: InputDecoration(
@@ -97,7 +100,7 @@ class _NewTransactionState extends State<NewTransaction> {
               ],
             ),
             SizedBox(
-              height: 50,
+              height: availableHeight * 0.05,
             ),
             Container(
               padding: EdgeInsets.only(right: 8),

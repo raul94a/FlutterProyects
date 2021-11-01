@@ -4,7 +4,8 @@ import '../models/transaction.dart';
 
 class Chart extends StatelessWidget {
   List<Transaction> lastWeekTransactions;
-  Chart(this.lastWeekTransactions);
+  final appBarAndPaddingHeight;
+  Chart(this.lastWeekTransactions, this.appBarAndPaddingHeight);
 
   List<Map<String, Object>> _groupLastWeekTransactions() {
     return List.generate(7, (index) {
@@ -46,14 +47,9 @@ class Chart extends StatelessWidget {
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.purple, width: 0.5)),
-            child: ChartBars(_groupedLastWeekTransactions, _totalAmount),
-          ) /*Column(
-            children: _groupLastWeekTransactions().reversed.map((e) {
-          return Column(children: [
-            Text('${e['date']} gasté ${e['totalAmount']}'),
-          ]);
-        }).toList()),*/
-          ),
+            child: ChartBars(_groupedLastWeekTransactions, _totalAmount,
+                appBarAndPaddingHeight),
+          )),
     );
   }
 }

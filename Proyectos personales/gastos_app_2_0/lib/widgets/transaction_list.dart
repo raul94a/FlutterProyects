@@ -5,11 +5,15 @@ import 'package:intl/intl.dart' as intl;
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
   Function(String) deleteTransaction;
-  TransactionList(this.transactions, this.deleteTransaction);
+  final appBarAndPaddingHeight;
+  TransactionList(
+      this.transactions, this.deleteTransaction, this.appBarAndPaddingHeight);
   @override
   Widget build(BuildContext context) {
+    final _screenSize = MediaQuery.of(context).size.height;
+    final availableHeight = _screenSize - appBarAndPaddingHeight;
     return Container(
-      height: 430,
+      height: availableHeight * 0.65,
       child: ListView.builder(
         itemCount: transactions.length,
         itemBuilder: (context, index) {
@@ -19,8 +23,7 @@ class TransactionList extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  height: 70,
-                  width: 120,
+                  height: availableHeight * 0.12,
                   padding: EdgeInsets.all(20),
                   margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                   child: FittedBox(
@@ -31,7 +34,7 @@ class TransactionList extends StatelessWidget {
                     ),
                   ),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
+                      borderRadius: BorderRadius.circular(80),
                       border: Border.all(color: Colors.deepPurple, width: 3)),
                 ),
                 Column(
@@ -53,7 +56,7 @@ class TransactionList extends StatelessWidget {
                     color: Color.fromRGBO(92, 14, 120, 1),
                     onPressed: () => deleteTransaction(transactions[index].id),
                     icon: Icon(Icons.delete),
-                    iconSize: 38,
+                    iconSize: availableHeight * 0.07,
                   ),
                 ),
               ],

@@ -5,7 +5,9 @@ import 'package:intl/intl.dart' as intl;
 class ChartBars extends StatelessWidget {
   List<Map<String, Object>> groupedLastWeekTransactions;
   double totalAmount;
-  ChartBars(this.groupedLastWeekTransactions, this.totalAmount);
+  final appBarAndPaddingHeight;
+  ChartBars(this.groupedLastWeekTransactions, this.totalAmount,
+      this.appBarAndPaddingHeight);
   double _getPercentage(double moneyOfTheDay) {
     return (moneyOfTheDay / totalAmount);
   }
@@ -22,8 +24,10 @@ class ChartBars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _screenSize = MediaQuery.of(context).size.height;
+    final availableHeight = _screenSize - appBarAndPaddingHeight;
     return Container(
-      height: 150,
+      height: availableHeight * 0.25,
       child: Row(
           children: groupedLastWeekTransactions.reversed.map((e) {
         return Expanded(

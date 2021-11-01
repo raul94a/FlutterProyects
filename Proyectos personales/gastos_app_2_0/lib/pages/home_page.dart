@@ -1,12 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import '../main.dart';
+import '../models/storage.dart';
+import '../models/transaction.dart';
 import '../widgets/chart.dart';
 import '../widgets/no_data.dart';
 import '../widgets/new_transaction.dart';
 import '../widgets/transaction_list.dart';
-import '../models/transaction.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -17,17 +16,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Transaction> _transactions = [];
+  double height = 0;
   @override
   void initState() {
     super.initState();
     widget.storage.readFile().then((String value) {
       setState(() {
-        _transactions = loadTransactionsFromFile(value);
+        _transactions = _loadTransactionsFromFile(value);
       });
     });
   }
 
-  List<Transaction> loadTransactionsFromFile(String transactions) {
+  List<Transaction> _loadTransactionsFromFile(String transactions) {
     List transactionList = jsonDecode(transactions)['transactions'] as List;
     List<Transaction> transactionsList = [];
     for (int i = 0; i < transactionList.length; i++) {
@@ -41,9 +41,8 @@ class _HomePageState extends State<HomePage> {
     return transactionsList;
   }
 
-  Map toJson() {
-    return {"transactions": _transactions.map((e) => e.toJson()).toList()};
-  }
+  Map _transactionsToJson() =>
+      {"transactions": _transactions.map((e) => e.toJson()).toList()};
 
   List<Transaction> get _lastWeekTransactions {
     return _transactions
@@ -68,44 +67,50 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _transactions.add(transaction);
     });
-    await widget.storage.writeFile(jsonEncode(toJson()));
+    await widget.storage.writeFile(jsonEncode(_transactionsToJson()));
   }
 
   void _deleteTransaction(String id) async {
     setState(() {
       _transactions.removeWhere((transaction) => transaction.id == id);
     });
-    widget.storage.writeFile(jsonEncode(toJson()));
+    widget.storage.writeFile(jsonEncode(_transactionsToJson()));
   }
 
   void _startNewTransaction() async {
-    await widget.storage.localDirectory();
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return NewTransaction(_addNewTransaction);
+          return NewTransaction(_addNewTransaction, height);
         });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(_transactions);
+    final appBar = AppBar(
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      title: const Text('Gastos Personales'),
+      centerTitle: true,
+      actions: [
+        IconButton(onPressed: _startNewTransaction, icon: const Icon(Icons.add))
+      ],
+    );
+
+    final _appBarAndPaddingHeight =
+        appBar.preferredSize.height + MediaQuery.of(context).padding.top;
+    height = _appBarAndPaddingHeight;
+    final _screenSize = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        title: Text('Gastos Personales'),
-        centerTitle: true,
-        actions: [
-          IconButton(onPressed: _startNewTransaction, icon: Icon(Icons.add))
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
-        child: _transactions.length == 0
-            ? NoData()
+        child: _transactions.isEmpty
+            ? NoData(_appBarAndPaddingHeight)
             : Column(
                 children: [
-                  Chart(_lastWeekTransactions),
-                  TransactionList(_transactions, _deleteTransaction),
+                  Chart(_lastWeekTransactions, _appBarAndPaddingHeight),
+                  TransactionList(_transactions, _deleteTransaction,
+                      _appBarAndPaddingHeight),
                 ],
               ),
       ),

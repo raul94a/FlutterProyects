@@ -1,0 +1,52 @@
+{
+    "nombreApp" : "Componentes APP",
+    "rutas" : [
+        {
+            "ruta" : "alert",
+            "icon" : "add_alert",
+            "texto": "Alertas"
+        },
+        {
+            "ruta" : "avatar",
+            "icon" : "accessibility",
+            "texto": "Avatars"
+        },
+        {
+            "ruta" : "card",
+            "icon" : "folder_open",
+            "texto": "Cards - Tarjetas"
+        },
+        {
+            "ruta" : "container",
+            "icon" : "content_copy",
+            "texto": "Contenedor animado"
+        },
+        {
+            "ruta" : "inputs",
+            "icon" : "input",
+            "texto": "Inputs"
+        },
+        {
+            "ruta" : "slider",
+            "icon" : "tune",
+            "texto": "Sliders"
+        },
+        {
+            "ruta" : "listview",
+            "icon" : "list",
+            "texto": "Listas"
+        },
+        {
+            "ruta" : "team",
+            "icon" : "supervised_user_circle",
+            "texto": "Adivina el equipo"
+        },
+        {
+            "ruta" : "info",
+            "icon" : "device_unknown",
+            "texto": "Device Info"
+        }
+
+
+    ]
+}

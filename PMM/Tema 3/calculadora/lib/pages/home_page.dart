@@ -1,6 +1,8 @@
 import 'package:calculadora/colors/app_background.dart';
 import 'package:calculadora/colors/text_color.dart';
 import 'package:calculadora/widgets/calculator_row.dart';
+import 'package:calculadora/widgets/history_calculation.dart';
+import 'package:calculadora/widgets/text_container.dart';
 import 'package:flutter/material.dart';
 import '../config/app_config.dart';
 
@@ -15,6 +17,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String _enteredNumber = '';
   String _mode = '';
   String _history = '';
+  List<String> _historic = [];
   bool lightColor = false;
   bool _equalPressed = false;
 
@@ -125,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //seteo el historial de cuenta
 
       _history = firstCalculation
-          ? '$_savedEnteredNumber $_mode $lastOutput'
+          ? '$_savedEnteredNumber $_mode $lastOutput = '
           : '$lastOutput $_mode $_savedEnteredNumber = ';
       //reinicio el modo
       _mode = '';
@@ -134,6 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _enteredNumber = '';
       //subo la bandera de igual presionado
       _equalPressed = true;
+      _historic.add(_history + ' ' + _output);
     });
   }
 
@@ -160,87 +164,121 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      actions: [
+        IconButton(
+            onPressed: () {
+              setState(() {
+                lightColor = lightColor ? false : true;
+              });
+            },
+            iconSize: 40,
+            icon: Icon(
+              Icons.colorize,
+              color: TextColor(lightColor).color(),
+            ))
+      ],
+      elevation: 0,
+      centerTitle: true,
+      backgroundColor: Colors.transparent,
+      title: Text(
+        'Calculadora',
+        style: TextStyle(color: TextColor(lightColor).color()),
+      ),
+    );
+    //calculamos
+    final appBarHeight = appBar.preferredSize.height;
+    final topHeight = MediaQuery.of(context).padding.top;
+    final Size screenSize = MediaQuery.of(context).size;
+
+    final double _availableHeight =
+        screenSize.height - (topHeight + appBarHeight);
+    final double _availableWidth = screenSize.width;
+    bool _wideScreen = _availableHeight > 650;
     return Container(
       decoration: AppBackground(lightColor).fondo(),
       child: Scaffold(
-        drawer:
-            IconButton(onPressed: () => print('hola'), icon: Icon(Icons.add)),
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          actions: [
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    lightColor = lightColor ? false : true;
-                  });
-                },
-                iconSize: 40,
-                icon: Icon(
-                  Icons.colorize,
-                  color: TextColor(lightColor).color(),
-                ))
-          ],
-          elevation: 0,
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          title: Text(
-            'Calculadora',
-            style: TextStyle(color: TextColor(lightColor).color()),
-          ),
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Container(
-              margin: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blueGrey, width: 2),
-                  gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.white, Colors.white])),
-              width: double.infinity,
-              height: 150,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      _history,
-                      style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
-                    ),
-                    Text(
-                      _equalPressed ? _output : _enteredNumber,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            //botones de la calculadora
-            ...rows
-                .map((row) => CalculatorRow(
-                    row,
-                    lightColor,
-                    _concatenateEnteredNumber,
-                    _setCalculationMode,
-                    _calculation,
-                    _reset,
-                    _eraseDigit,
-                    _changeSign))
-                .toList(),
-          ],
-        ),
+        appBar: appBar,
+        body: SizedBox(
+            height: _wideScreen ? _availableHeight * 0.90 : _availableHeight,
+            child: _wideScreen
+                ? _webView(_availableHeight, _availableWidth)
+                : _mobileView(_availableHeight, _availableWidth)),
       ),
     );
+  }
+
+  Widget _mobileView(double availableHeight, double availableWidth) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        TextContainer(availableHeight, availableWidth, _output, _enteredNumber,
+            _equalPressed, _history),
+        //botones de la calculadora
+        ..._createCalculatorRows(availableHeight, availableWidth)
+      ],
+    );
+  }
+
+  Widget _webView(double availableHeight, double availableWidth) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _mobileView(availableHeight, availableWidth),
+        SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            padding: EdgeInsets.all(30),
+            width: availableHeight * 0.50,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.white),
+                borderRadius: BorderRadius.circular(20)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Historial de operaciones',
+                  style: TextStyle(
+                      color: TextColor(lightColor).color(), fontSize: 22),
+                ),
+                _historic.isEmpty
+                    ? SizedBox(
+                        height: 20,
+                        child: Text('Historial Vacio...',
+                            style: TextStyle(
+                                color: TextColor(lightColor).color())),
+                      )
+                    : Center(),
+                ..._createHistoric(lightColor, availableWidth, _mode)
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  List<Widget> _createHistoric(bool lightColor, double width, String mode) {
+    return _historic
+        .map((e) => HistoryCalculation(lightColor, e, width))
+        .toList();
+  }
+
+  List<Widget> _createCalculatorRows(
+      double availableHeight, double availableWidth) {
+    return rows
+        .map((row) => CalculatorRow(
+            availableHeight,
+            availableWidth,
+            row,
+            lightColor,
+            _concatenateEnteredNumber,
+            _setCalculationMode,
+            _calculation,
+            _reset,
+            _eraseDigit,
+            _changeSign))
+        .toList();
   }
 }

@@ -5,7 +5,6 @@ import '../provider/manu_provider.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final menu = menuProvider;
     return Scaffold(
       appBar: AppBar(
         title: Text('APPCOMPONENTES'),
@@ -16,7 +15,7 @@ class HomePage extends StatelessWidget {
 
   dynamic _lista() {
     return FutureBuilder(
-        future: menuProvider.cargarDatos(),
+        future:  menuProvider.cargarDatos(),
         initialData: [],
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           return ListView(children: _listaItems(snapshot.data!, context));
@@ -61,10 +60,7 @@ class HomePage extends StatelessWidget {
         leading: Icon(config[element["icon"]], color: Colors.blue),
         trailing: Icon(Icons.arrow_right_alt, color: Colors.blue),
         onTap: () {
-          final route = MaterialPageRoute(builder: (context) {
-            return AlertPage();
-          });
-          Navigator.push(context, route);
+          Navigator.pushNamed(context, element['ruta']);
         },
       );
       opciones.add(widgetTemp);

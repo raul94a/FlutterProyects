@@ -10,13 +10,13 @@ class _MenuProvider {
   }
 
   Future<List<Map<String, dynamic>>> cargarDatos() async {
-    rootBundle.loadString('assets/menu_opts.json').then((value) {
+    await rootBundle.loadString('assets/menu_opts.json').then((value) {
       Map mapa = jsonDecode(value);
 
       (mapa['rutas'] as List).forEach((a) => opciones.add(a));
-
-      // opciones = mapa['rutas'];
+      //opciones = mapa['rutas'] as List<Map<String,dynamic>>;
     });
+   // print(opciones);
     return opciones;
   }
 }

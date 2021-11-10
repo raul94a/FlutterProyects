@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto91121/provider/manu_provider.dart';
 
 class HomePageTemp extends StatelessWidget {
   @override
@@ -16,44 +17,45 @@ class HomePageTemp extends StatelessWidget {
     Icon(Icons.person_off_outlined)
   ];
   Widget build(BuildContext context) {
+    List<Widget> _crearItems() {
+      List<Widget> lista = [];
+      int contador = 0;
+
+      for (String opcion in opciones) {
+        lista.add(ListTile(
+          title: Text(opcion),
+          subtitle: Text(subtitulos[contador]),
+          leading: avatars[contador],
+          trailing: Icon(Icons.arrow_right_sharp),
+        ));
+        lista.add(Divider());
+        contador++;
+      }
+      return lista;
+    }
+
+    dynamic _crearItemsCorta() {
+      int contador = -1;
+      return opciones.map((e) {
+        contador++;
+        return Column(
+          children: [
+            ListTile(
+              title: Text(e),
+              subtitle: Text(subtitulos[contador]),
+              leading: avatars[contador],
+              trailing: Icon(Icons.arrow_right_sharp),
+            )
+          ],
+        );
+      }).toList();
+    }
+
+    
     return Scaffold(
         appBar: AppBar(
           title: Text('APP COMPONENTES'),
         ),
         body: ListView(children: _crearItemsCorta()));
-  }
-
-  List<Widget> _crearItems() {
-    List<Widget> lista = [];
-    int contador = 0;
-
-    for (String opcion in opciones) {
-      lista.add(ListTile(
-        title: Text(opcion),
-        subtitle: Text(subtitulos[contador]),
-        leading: avatars[contador],
-        trailing: Icon(Icons.arrow_right_sharp),
-      ));
-      lista.add(Divider());
-      contador++;
-    }
-    return lista;
-  }
-
-  dynamic _crearItemsCorta() {
-    int contador = -1;
-    return opciones.map((e) {
-      contador++;
-      return Column(
-        children: [
-          ListTile(
-            title: Text(e),
-            subtitle: Text(subtitulos[contador]),
-            leading: avatars[contador],
-            trailing: Icon(Icons.arrow_right_sharp),
-          )
-        ],
-      );
-    }).toList();
   }
 }

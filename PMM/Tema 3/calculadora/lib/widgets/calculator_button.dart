@@ -1,18 +1,19 @@
 import 'package:calculadora/colors/text_color.dart';
+import 'package:calculadora/config/app_config.dart';
 import 'package:flutter/material.dart';
 
 class CalculatorButton extends StatelessWidget {
-  final availableHeight;
-  final availableWidth;
-  final lightColor;
-  final button;
-  Function(String)? concatenateNumber;
-  Function(String)? setCalculationMode;
+  final double availableHeight;
+  final double availableWidth;
+  final bool lightColor;
+  final String button;
+  final Function(String)? concatenateNumber;
+  final Function(String)? setCalculationMode;
 
-  Function? calculation;
-  Function? reset;
-  Function? eraseDigit;
-  Function? changeSign;
+  final Function? calculation;
+  final Function? reset;
+  final Function? eraseDigit;
+  final Function? changeSign;
 
   CalculatorButton(
       {required this.availableHeight,
@@ -51,7 +52,8 @@ class CalculatorButton extends StatelessWidget {
 
     Color getColor(String e) {
       Color color = Colors.transparent;
-      if (['+', '-', '*', '/', 'BACK', 'C', '='].contains(button)) {
+      //noNumbers es una lista que contiene los botones que no son numeros
+      if (noNumbers.contains(button)) {
         color = lightColor
             ? Color.fromRGBO(250, 182, 188, 0.85)
             : Color.fromRGBO(15, 15, 30, 0.95);
@@ -73,9 +75,9 @@ class CalculatorButton extends StatelessWidget {
         child: RaisedButton(
           color: getColor(button),
           onPressed: () => {
-            if (['7', '8', '9', '4', '5', '6', '1', '2', '3', '0'].contains(button))
+            if (numbers.contains(button))
               {concatenateNumber!(button)}
-            else if (['+', '-', '*', '/'].contains(button))
+            else if (modos.contains(button))
               {setCalculationMode!(button)}
             else if (button == '=')
               {calculation!()}

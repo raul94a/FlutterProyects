@@ -34,7 +34,7 @@ class HistoryCalculation extends StatelessWidget {
         color = lightColor ? Colors.deepPurple : Colors.yellow;
       else if (history.contains('/'))
         color =
-            lightColor ? Color.fromRGBO(120, 240, 120, 1) : Colors.greenAccent;
+            lightColor ? Color.fromRGBO(170, 240, 160, 1) : Colors.greenAccent;
 
       return color;
     }
@@ -43,8 +43,8 @@ class HistoryCalculation extends StatelessWidget {
         decoration: BoxDecoration(
             border: Border.all(color: getBorderColor(), width: 3),
             borderRadius: BorderRadius.circular(20)),
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        padding: EdgeInsets.all(15),
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        padding: const EdgeInsets.all(15),
         height: 60,
         width: availableWidth * 0.25,
         child: Row(
@@ -63,21 +63,3 @@ class HistoryCalculation extends StatelessWidget {
         ));
   }
 }
-/*
-Text(
-          history,
-          style: TextStyle(fontSize: 20, color: TextColor(lightColor).color()),
-        )
-
-
-
-
-
-        ListTile(
-        leading: Icon(getIcon()),
-        title: Text(
-          history,
-          style: TextStyle(fontSize: 20, color: getBorderColor()),
-        ),
-      ),
-*/

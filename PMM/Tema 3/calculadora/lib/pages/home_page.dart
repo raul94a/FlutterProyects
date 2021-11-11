@@ -149,6 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _history = '';
       _savedEnteredNumber = '';
       _equalPressed = false;
+      _historic = [];
     });
   }
 
@@ -232,7 +233,8 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: EdgeInsets.all(30),
             width: availableHeight * 0.50,
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.white),
+                border:
+                    Border.all(color: lightColor ? Colors.black : Colors.white),
                 borderRadius: BorderRadius.circular(20)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -249,7 +251,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             style: TextStyle(
                                 color: TextColor(lightColor).color())),
                       )
-                    : Center(),
+                    : IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _historic = [];
+                          });
+                        },
+                        icon: Icon(Icons.delete,
+                            color: !lightColor ? Colors.red : Colors.black)),
                 ..._createHistoric(lightColor, availableWidth, _mode)
               ],
             ),

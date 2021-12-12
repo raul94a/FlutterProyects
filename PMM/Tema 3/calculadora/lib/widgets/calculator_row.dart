@@ -14,6 +14,7 @@ class CalculatorRow extends StatelessWidget {
   VoidCallback reset;
   VoidCallback eraseDigit;
   VoidCallback changeSign;
+  VoidCallback intToDouble;
   CalculatorRow(
       this.availableHeight,
       this.availableWidth,
@@ -24,7 +25,8 @@ class CalculatorRow extends StatelessWidget {
       this.calculation,
       this.reset,
       this.eraseDigit,
-      this.changeSign);
+      this.changeSign,
+      this.intToDouble);
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,7 @@ class CalculatorRow extends StatelessWidget {
           lightColor: lightColor,
           button: button,
           //parametros opcionales
+          intToDoubleHandler: button == '.' ? intToDouble : null,
           concatenateNumber:
               numbers.contains(button) ? concatenateNumber : null,
           calculation: button == '=' ? calculation : null,

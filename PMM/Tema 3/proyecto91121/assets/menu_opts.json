@@ -1,6 +1,14 @@
 {
     "nombreApp" : "Componentes APP",
     "rutas" : [
+        {   "ruta": "infinito", 
+            "icon": "sports_soccer", 
+            "texto": "scrollInfinito"},
+        {
+            "ruta": "futbol",
+            "icon": "sports_soccer",
+            "texto": "futbol"
+        },
         {
             "ruta" : "alert",
             "icon" : "add_alert",
@@ -46,7 +54,5 @@
             "icon" : "device_unknown",
             "texto": "Device Info"
         }
-
-
     ]
 }

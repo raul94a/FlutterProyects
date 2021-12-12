@@ -2,6 +2,7 @@ import 'package:calculadora/colors/app_background.dart';
 import 'package:calculadora/colors/text_color.dart';
 import 'package:calculadora/widgets/calculator_row.dart';
 import 'package:calculadora/widgets/history_calculation.dart';
+import 'package:calculadora/widgets/operation_historial.dart';
 import 'package:calculadora/widgets/text_container.dart';
 import 'package:flutter/material.dart';
 import '../config/app_config.dart';
@@ -32,8 +33,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _setCalculationMode(String mode) {
-    if ((_output == '' && _enteredNumber == '') || _enteredNumber == '-')
+    if ((_output == '' && _enteredNumber == '') || _enteredNumber == '-') {
       return;
+    }
     setState(() {
       _mode = mode;
       //En el caso de gestionar el primer cálculo...
@@ -48,17 +50,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String sum(a, b) {
-    return (int.parse(a) + int.parse(b)).toString();
+    return (double.parse(a) + double.parse(b)).toString();
   }
 
-  String minus(a, b) => (int.parse(a) - int.parse(b)).toString();
-  String multiply(a, b) => (int.parse(a) * int.parse(b)).toString();
+  String minus(a, b) => (double.parse(a) - double.parse(b)).toString();
+  String multiply(a, b) => (double.parse(a) * double.parse(b)).toString();
   dynamic divide(a, b) {
-    int divisor = int.parse(b);
+    double divisor = double.parse(b);
     if (divisor == 0) {
       return;
     }
-    return (int.parse(a) / divisor).toStringAsFixed(0);
+    return (double.parse(a) / divisor).toStringAsFixed(5);
   }
 
   Map<String, String> exchangeValues(String a, String b) {
@@ -72,9 +74,15 @@ class _MyHomePageState extends State<MyHomePage> {
     switch (mode) {
       case "+":
         output = _output == ''
+            //en el caso de realizar el PRIMER calculo
+            //Juego con tres variables para realizar los cálculos, que son gestionadas
+            //de forma diferente en el caso de ser EL PRIMER CALCULO de la calculadora y el resto de cálculos
+            //La primera sentencia del ternario solo sirve para que aparezcan los números en el lugar correcto del container de la calculadora
             ? sum(calculationValues["last_output"],
                 calculationValues["savedEnteredNumber"])
+            //para el resto de calculos
             : sum(lastOutput, _savedEnteredNumber);
+
         break;
       case "-":
         output = _output == ''
@@ -95,7 +103,16 @@ class _MyHomePageState extends State<MyHomePage> {
             : divide(lastOutput, _savedEnteredNumber);
         break;
     }
+    //print(output.split('.'));
+   // print(output);
+    //print(output.contains('.'));
+    final split = output.split('.');
 
+    if (split.length > 1) {
+      if (int.parse(output.split('.')[1]) == 0 && output.contains('.')) {
+        output = output.split('.')[0];
+      }
+    }
     return output;
   }
 
@@ -114,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     // pulso en el igual sin un modo de operacion, bloqueo la ejecución de la función
     if (_mode == '') return;
-    //recogo el SEGUNDO valor introducido (ocurre solo en la primera cuenta) o el valor que llevo acumulado
+    //recojo el SEGUNDO valor introducido (ocurre solo en la primera cuenta) o el valor que llevo acumulado
     String lastOutput = _output == '' ? _enteredNumber : _output;
     //si el output está seteado, es decir, NO es la primera cuenta...
     if (_output != '') {
@@ -163,9 +180,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _resetHistoricHandler() => setState(() => _historic = []);
+  //para poner el punto a el valor introducido
+  void _intToDouble() {
+    if (_enteredNumber.contains('.')) {
+      return;
+    }
+    setState(() {
+      _enteredNumber += '.';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final appBar = AppBar(
+      toolbarHeight: MediaQuery.of(context).size.width > 650 ? 50 : 50,
       actions: [
         IconButton(
             onPressed: () {
@@ -195,30 +224,35 @@ class _MyHomePageState extends State<MyHomePage> {
     final double _availableHeight =
         screenSize.height - (topHeight + appBarHeight);
     final double _availableWidth = screenSize.width;
-    bool _wideScreen = _availableHeight > 650;
+    bool _wideScreen = _availableWidth > 650;
+
     return Container(
       decoration: AppBackground(lightColor).fondo(),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: appBar,
-        body: SizedBox(
-            height: _wideScreen ? _availableHeight * 0.90 : _availableHeight,
-            child: _wideScreen
-                ? _webView(_availableHeight, _availableWidth)
-                : _mobileView(_availableHeight, _availableWidth)),
+        body: SingleChildScrollView(
+          child: SizedBox(
+              height: _availableHeight,
+              child: _wideScreen
+                  ? _webView(_availableHeight, _availableWidth)
+                  : _mobileView(_availableHeight, _availableWidth)),
+        ),
       ),
     );
   }
 
   Widget _mobileView(double availableHeight, double availableWidth) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        TextContainer(availableHeight, availableWidth, _output, _enteredNumber,
-            _equalPressed, _history),
-        //botones de la calculadora
-        ..._createCalculatorRows(availableHeight, availableWidth)
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          TextContainer(availableHeight, availableWidth, _output,
+              _enteredNumber, _equalPressed, _history),
+          //botones de la calculadora
+          ..._createCalculatorRows(availableHeight, availableWidth)
+        ],
+      ),
     );
   }
 
@@ -229,40 +263,15 @@ class _MyHomePageState extends State<MyHomePage> {
         _mobileView(availableHeight, availableWidth),
         SingleChildScrollView(
           child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            padding: EdgeInsets.all(30),
-            width: availableHeight * 0.50,
-            decoration: BoxDecoration(
-                border:
-                    Border.all(color: lightColor ? Colors.black : Colors.white),
-                borderRadius: BorderRadius.circular(20)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Historial de operaciones',
-                  style: TextStyle(
-                      color: TextColor(lightColor).color(), fontSize: 22),
-                ),
-                _historic.isEmpty
-                    ? SizedBox(
-                        height: 20,
-                        child: Text('Historial Vacio...',
-                            style: TextStyle(
-                                color: TextColor(lightColor).color())),
-                      )
-                    : IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _historic = [];
-                          });
-                        },
-                        icon: Icon(Icons.delete,
-                            color: !lightColor ? Colors.red : Colors.black)),
-                ..._createHistoric(lightColor, availableWidth, _mode)
-              ],
-            ),
-          ),
+              margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              padding: EdgeInsets.all(30),
+              width: availableHeight * 0.80,
+              decoration: BoxDecoration(
+                  border: Border.all(
+                      color: lightColor ? Colors.black : Colors.white),
+                  borderRadius: BorderRadius.circular(20)),
+              child: OperationHistorial(lightColor, _historic,
+                  _resetHistoricHandler, availableWidth, _mode)),
         )
       ],
     );
@@ -287,7 +296,8 @@ class _MyHomePageState extends State<MyHomePage> {
             _calculation,
             _reset,
             _eraseDigit,
-            _changeSign))
+            _changeSign,
+            _intToDouble))
         .toList();
   }
 }

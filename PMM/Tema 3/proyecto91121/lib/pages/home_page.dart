@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
 
   dynamic _lista() {
     return FutureBuilder(
-        future:  menuProvider.cargarDatos(),
+        future: menuProvider.cargarDatos(),
         initialData: [],
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           return ListView(children: _listaItems(snapshot.data!, context));
@@ -43,6 +43,7 @@ class HomePage extends StatelessWidget {
     final List<Widget> opciones = [];
     Map<String, IconData> config = {
       "add_alert": Icons.add_alert,
+      "sports_soccer": Icons.sports_soccer,
       "accessibility": Icons.accessibility,
       "folder_open": Icons.folder_open,
       "content_copy": Icons.content_copy,

@@ -20,33 +20,37 @@ class TextContainer extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [Colors.white, Colors.white])),
-      width: availableWidth > 650 ? availableWidth * 0.5 : double.infinity,
+      width: availableWidth > 650
+          ? availableWidth * 0.5
+          : MediaQuery.of(context).size.width,
       //esta será la altura que el contenedor de texto tendrá. Será el 25% del espacio disponible
       height: availableWidth > 650
-          ? availableHeight * 0.20
+          ? availableHeight * 0.25
           : availableHeight * 0.30,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              history,
-              style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey),
-            ),
-            Text(
-              equalPressed ? output : enteredNumber,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                history,
+                style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey),
+              ),
+              Text(
+                equalPressed ? output : enteredNumber,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
       ),
     );

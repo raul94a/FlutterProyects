@@ -14,6 +14,7 @@ class CalculatorButton extends StatelessWidget {
   final Function? reset;
   final Function? eraseDigit;
   final Function? changeSign;
+  final Function? intToDoubleHandler;
 
   CalculatorButton(
       {required this.availableHeight,
@@ -25,17 +26,18 @@ class CalculatorButton extends StatelessWidget {
       this.changeSign,
       this.eraseDigit,
       this.reset,
-      this.setCalculationMode});
+      this.setCalculationMode,
+      this.intToDoubleHandler});
   @override
   Widget build(BuildContext context) {
     double setContainerWidth(String e) {
       double width = 0;
       switch (button) {
-        case "=":
-          width = availableWidth > 650
-              ? availableHeight * 0.48
-              : availableHeight * 0.26;
-          break;
+        // case "=":
+        //   width = availableWidth > 650
+        //       ? availableHeight * 0.48
+        //       : availableHeight * 0.26;
+        //   break;
         case "BACK":
           width = availableWidth > 650
               ? availableHeight * 0.48
@@ -66,7 +68,7 @@ class CalculatorButton extends StatelessWidget {
     }
 
     return Container(
-      height: availableHeight * 0.125,
+      height: availableHeight * 0.132,
       decoration: BoxDecoration(
           border: Border.all(color: TextColor(lightColor).borderColor())),
       width: setContainerWidth(button),
@@ -87,6 +89,8 @@ class CalculatorButton extends StatelessWidget {
               {eraseDigit!()}
             else if (button == '+/-')
               {changeSign!()}
+            else if (button == '.')
+              {intToDoubleHandler!()}
           },
           child: button == 'BACK'
               ? Icon(Icons.backspace, color: TextColor(lightColor).color())

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/dummy_data.dart';
-import 'package:meal_app/models/meal_model.dart';
+import 'package:meal_app/services/meal_model.dart';
+import 'package:meal_app/services/meals_provider.dart';
+import 'package:provider/provider.dart';
 
 class MealDetailPage extends StatelessWidget {
-  final Function(String) toggleFavorite;
-  final Function(String) isMealFavorite;
-
-  MealDetailPage(this.toggleFavorite, this.isMealFavorite);
-
   Widget buildSectionText(context, String text) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -31,9 +28,10 @@ class MealDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String mealId = ModalRoute.of(context)!.settings.arguments as String;
-
-    final selectedMeal = DUMMY_MEALS.firstWhere((meal) => meal.id == mealId);
-
+    final mealsData = Provider.of<MealsProvider>(context, listen: false);
+    final selectedMeal =
+        mealsData.meals.firstWhere((meal) => meal.id == mealId);
+    print('revbuiled');
     return Scaffold(
       appBar: AppBar(title: Text('${selectedMeal.title}')),
       body: SingleChildScrollView(
@@ -87,12 +85,17 @@ class MealDetailPage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(isMealFavorite(mealId) ? Icons.star : Icons.star_border),
-        onPressed: () {
-          toggleFavorite(mealId);
-          // Navigator.of(context).pop(mealId);
-        },
+      //CON CONSUMER CONSEGUIMOS QUE NO SE REBUILDEE TODA LA PÁGINA
+      floatingActionButton: Consumer<MealsProvider>(
+        builder: (context, meals, child) => FloatingActionButton(
+          child: Icon(
+              meals.meals.firstWhere((element) => element.id == mealId).isFav
+                  ? Icons.star
+                  : Icons.star_border),
+          onPressed: () {
+            mealsData.toggleFavorite(mealId);
+          },
+        ),
       ),
     );
   }

@@ -57,6 +57,7 @@ class _FiltersPageState extends State<FiltersPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Configuración - Filtrado'),
+          backgroundColor: Color.fromRGBO(106, 103, 158, 1),
           actions: [
             IconButton(
                 onPressed: () async {

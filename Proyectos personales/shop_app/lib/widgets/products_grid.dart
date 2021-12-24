@@ -4,10 +4,14 @@ import 'package:provider/provider.dart';
 import 'product_item.dart';
 
 class ProductsGrid extends StatelessWidget {
+  final bool showFav;
+  ProductsGrid(this.showFav);
   @override
   Widget build(BuildContext context) {
+    //la data del provider de la clase ProductsProvider
     final productsData = Provider.of<ProductsProvider>(context);
-    final products = productsData.products;
+    //accedemos la getter creado...
+    final products = showFav ? productsData.favProducts : productsData.products;
 
     return GridView.builder(
       padding: const EdgeInsets.all(10),
@@ -21,6 +25,7 @@ class ProductsGrid extends StatelessWidget {
       //al igual que en elmain se utiliza el constructor value del provider
       //el constructor value ELIMINA automaticamente el products[i] cuando la pagina es reemplazada, evitando memory leaks
       itemBuilder: (_, i) => ChangeNotifierProvider.value(
+        //este value es el que recibe el ProductItem
         value: products[i],
         child: ProductItem(),
       ),

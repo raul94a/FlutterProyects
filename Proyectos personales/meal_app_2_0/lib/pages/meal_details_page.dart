@@ -58,7 +58,7 @@ class _MealDetailPageState extends State<MealDetailPage> {
         _buildContainer(
           meal,
           ListView.builder(
-              itemCount: meal.ingredients.length,
+              itemCount: meal.steps.length,
               itemBuilder: (_, index) {
                 return Column(
                   children: [
@@ -69,7 +69,7 @@ class _MealDetailPageState extends State<MealDetailPage> {
                         backgroundColor: Colors.pink,
                       ),
                       title: Text(
-                        meal.ingredients[index],
+                        meal.steps[index],
                       ),
                       horizontalTitleGap: 5,
                     ),
@@ -90,7 +90,10 @@ class _MealDetailPageState extends State<MealDetailPage> {
   Widget build(BuildContext context) {
     final Meal meal = ModalRoute.of(context)!.settings.arguments as Meal;
     return Scaffold(
-        appBar: AppBar(title: Text(meal.title!)),
+        appBar: AppBar(
+          title: Text(meal.title!),
+          backgroundColor: Color.fromRGBO(106, 103, 158, 1),
+        ),
         body: SingleChildScrollView(
             child: Stack(
           children: [

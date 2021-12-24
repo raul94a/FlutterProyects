@@ -12,10 +12,42 @@ class ProductDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final productId = ModalRoute.of(context).settings.arguments as String;
     //...
-    final Product product = Provider.of<ProductsProvider>(context).products
-      
+    final Product product = Provider.of<ProductsProvider>(context)
+        .products
         .firstWhere((e) => e.id == productId);
     print(product);
-    return Scaffold(appBar: AppBar(title: Text(product.title)), body: Column());
+    return Scaffold(
+        appBar: AppBar(title: Text(product.title)),
+        body: Column(
+          children: [
+            Container(
+                height: 300,
+                width: double.infinity,
+                child: Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
+                )),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              '${product.price}',
+              style: TextStyle(color: Colors.grey, fontSize: 20),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              product.description,
+              textAlign: TextAlign.center,
+              softWrap: true,
+            ),
+
+            //////
+            ///
+            ///
+            ///
+          ],
+        ));
   }
 }

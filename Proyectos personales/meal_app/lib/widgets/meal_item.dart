@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/models/meal_model.dart';
+import 'package:meal_app/services/meal_model.dart';
 
 import 'card_item_image.dart';
 import 'card_item_information.dart';

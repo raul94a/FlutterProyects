@@ -1,6 +1,8 @@
 import 'package:emojis/emoji.dart';
 import 'package:flutter/material.dart';
-import 'package:emojis/emojis.dart'; // to use Emoji collection
+import 'package:emojis/emojis.dart';
+import 'package:meal_app/services/auth.dart';
+import 'package:provider/provider.dart'; // to use Emoji collection
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -12,7 +14,25 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String usuario = '';
   String pass = '';
+
+  bool _isLoading = false;
   @override
+  void _showErrorDialog(error) {
+    showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+              title: Text('Se ha producido un error'),
+              content: Text(error),
+              actions: [
+                TextButton(
+                  child: Text('aceptar'),
+                  onPressed: () => Navigator.of(context).pop(),
+                )
+              ]);
+        });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
@@ -109,44 +129,65 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildForm(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.20),
-      // height: MediaQuery.of(context).size.height * 0.5,
-      child: Column(
-        // mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            decoration: BoxDecoration(
-                color: Colors.black54, borderRadius: BorderRadius.circular(20)),
-            child: const Text('RecetApp',
-                style: TextStyle(
-                    color: Colors.white,
-                    letterSpacing: 2.5,
-                    fontFamily: 'RobotoCondensed',
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold)),
-          ),
-          _buildTextField(hintText: 'Introduce tu usuario', icon: Icons.people),
-          const SizedBox(
-            height: 5,
-          ),
-          _buildTextField(
-              hintText: 'Introduce tu contraseña', icon: Icons.lock),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              _buildButton(text: 'Registrarse', color: Colors.deepPurpleAccent),
-              const SizedBox(
-                width: 25,
-              ),
-              _buildButton(text: 'Iniciar sesión'),
-              const SizedBox(
-                width: 15,
-              ),
+    return Center(
+      child: Container(
+        decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                  offset: Offset(0, 8),
+                  color: Colors.black.withOpacity(0.55),
+                  blurRadius: 15,
+                  //offset: Offset.infinite,
+                  spreadRadius: 7),
             ],
-          )
-        ],
+            color: Color.fromRGBO(93, 84, 163, 0.55),
+            //border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(25)),
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: MediaQuery.of(context).size.height * 0.6,
+        padding:
+            EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.12),
+        // height: MediaQuery.of(context).size.height * 0.5,
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              decoration: BoxDecoration(
+                  color: Colors.black54,
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(20)),
+              child: const Text('RecetApp',
+                  style: TextStyle(
+                      color: Colors.white,
+                      letterSpacing: 2.5,
+                      fontFamily: 'RobotoCondensed',
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold)),
+            ),
+            _buildTextField(
+                hintText: 'Introduce tu usuario', icon: Icons.people),
+            const SizedBox(
+              height: 5,
+            ),
+            _buildTextField(
+                hintText: 'Introduce tu contraseña', icon: Icons.lock),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildButton(
+                    text: 'Registrarse', color: Colors.deepPurpleAccent),
+                const SizedBox(
+                  width: 25,
+                ),
+                _buildButton(text: 'Iniciar sesión'),
+                const SizedBox(
+                  width: 15,
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -160,60 +201,85 @@ class _LoginPageState extends State<LoginPage> {
     //   }
     //   ;
     // });
-    return TextField(
-      obscureText: icon == Icons.lock ? true : false,
-      obscuringCharacter: ('\u{263B}'),
-      onChanged: (value) {
-        setState(() {
-          //usuario
-          if (icon == Icons.people) {
-            usuario = value;
-          }
-          //contraseña
-          else {
-            pass = value;
-            print(pass);
-          }
-        });
-      },
-      cursorColor: Colors.pink,
-      style: const TextStyle(fontSize: 20, fontFamily: 'RobotoCondensed'),
-      decoration: InputDecoration(
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.all(25),
-          filled: true,
-          hintText: hintText,
-          prefixIcon: Icon(icon)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: TextField(
+        obscureText: icon == Icons.lock ? true : false,
+        obscuringCharacter: ('\u{263B}'),
+        onChanged: (value) {
+          setState(() {
+            //usuario
+            if (icon == Icons.people) {
+              usuario = value;
+            }
+            //contraseña
+            else {
+              pass = value;
+              print(pass);
+            }
+          });
+        },
+        cursorColor: Colors.pink,
+        style: const TextStyle(fontSize: 20, fontFamily: 'RobotoCondensed'),
+        decoration: InputDecoration(
+
+            // errorText: 'Algún dato es incorrecto',
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.all(25),
+            filled: true,
+            hintText: hintText,
+            prefixIcon: Icon(icon)),
+      ),
     );
   }
 
   Widget _buildButton({String text = '', color = Colors.pink}) {
-    return ElevatedButton(
-      onPressed: () async {
-        //Registro de usuario en la bd
-        if (text == 'Registrarse') {
-        }
-        //Inicio de sesión
-        else {
-          if (usuario == 'a' && pass == 'a') {
-            Navigator.pushReplacementNamed(context, 'tab');
-          }
-        }
-      },
-      child: Text(
-        text,
-        style: const TextStyle(
-            color: Colors.white,
-            fontFamily: 'Raleway',
-            fontSize: 16,
-            fontWeight: FontWeight.bold),
-      ),
-      style: (ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)))),
-          backgroundColor: MaterialStateColor.resolveWith((states) => color))),
-    );
+    return _isLoading && text != 'Registrarse'
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : ElevatedButton(
+            onPressed: () async {
+              //Registro de usuario en la bd
+              if (text == 'Registrarse') {
+              }
+              //Inicio de sesión
+              else {
+                setState(() {
+                  _isLoading = true;
+                });
+                // if (usuario == 'a' && pass == 'a') {
+                //Navigator.pushReplacementNamed(context, 'tab');
+                try {
+                  await Provider.of<Auth>(context, listen: false)
+                      .login(usuario, pass);
+                } on HttpException catch (err) {
+                  _showErrorDialog(err.toString());
+                } catch (err) {
+                  _showErrorDialog(err.toString());
+                } finally {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }
+                // }
+              }
+            },
+            child: Text(
+              text,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Raleway',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+            ),
+            style: (ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)))),
+                backgroundColor:
+                    MaterialStateColor.resolveWith((states) => color))),
+          );
   }
 
   _buildBackground() => [

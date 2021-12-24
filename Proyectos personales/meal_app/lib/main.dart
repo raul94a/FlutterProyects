@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/dummy_data.dart';
-import 'package:meal_app/models/meal_model.dart';
+import 'package:meal_app/services/categories_provider.dart';
+import 'package:meal_app/services/meal_model.dart';
 import 'package:meal_app/pages/categories_page.dart';
 import 'package:meal_app/pages/category_meals_page.dart';
 import 'package:meal_app/pages/filters_page.dart';
 import 'package:meal_app/pages/home_page.dart';
 import 'package:meal_app/pages/meal_detail_page.dart';
 import 'package:meal_app/pages/tab_page.dart';
+import 'package:meal_app/services/meals_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,70 +23,78 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Map<String, bool> _filters = {
-    'gluten': false,
-    'lactose': false,
-    'vegetarian': false,
-    'vegan': false
-  };
-  List<Meal> meals = DUMMY_MEALS;
-  List<Meal> _favoriteMeals = [];
+  //DESDE QUE SE USAN PROVIDERS AQUI YA NO PINTAN NADA ESTAS COSAS...
+  // Map<String, bool> _filters = {
+  //   'gluten': false,
+  //   'lactose': false,
+  //   'vegetarian': false,
+  //   'vegan': false
+  // };
+  // List<Meal> meals = DUMMY_MEALS;
+  // List<Meal> _favoriteMeals = [];
 
-  void _setFilters(Map<String, bool> filterData) {
-    setState(() {
-      _filters = filterData;
-      meals = DUMMY_MEALS.where((meal) {
-        if (_filters['gluten'] as bool && !meal.isGlutenFree) {
-          return false;
-        }
-        if (_filters['lactose'] as bool && !meal.isLactoseFree) {
-          return false;
-        }
-        if (_filters['vegetarian'] as bool && !meal.isVegetarian) {
-          return false;
-        }
-        if (_filters['vegan'] as bool && !meal.isVegan) {
-          return false;
-        }
-        return true;
-      }).toList();
-    });
-  }
+  // void _setFilters(Map<String, bool> filterData) {
+  //   setState(() {
+  //     _filters = filterData;
+  //     meals = DUMMY_MEALS.where((meal) {
+  //       if (_filters['gluten'] as bool && !meal.isGlutenFree) {
+  //         return false;
+  //       }
+  //       if (_filters['lactose'] as bool && !meal.isLactoseFree) {
+  //         return false;
+  //       }
+  //       if (_filters['vegetarian'] as bool && !meal.isVegetarian) {
+  //         return false;
+  //       }
+  //       if (_filters['vegan'] as bool && !meal.isVegan) {
+  //         return false;
+  //       }
+  //       return true;
+  //     }).toList();
+  //   });
+  // }
 
-  void _toggleFavorite(String mealId) {
-    final existingIndex =
-        _favoriteMeals.indexWhere((element) => element == mealId);
-    if (existingIndex >= 0) {
-      setState(() {
-        _favoriteMeals.removeAt(existingIndex);
-      });
-    } else {
-      _favoriteMeals
-          .add(DUMMY_MEALS.firstWhere((element) => element.id == mealId));
-    }
-  }
+  // void _toggleFavorite(String mealId) {
+  //   final existingIndex =
+  //       _favoriteMeals.indexWhere((element) => element == mealId);
+  //   if (existingIndex >= 0) {
+  //     setState(() {
+  //       _favoriteMeals.removeAt(existingIndex);
+  //     });
+  //   } else {
+  //     _favoriteMeals
+  //         .add(DUMMY_MEALS.firstWhere((element) => element.id == mealId));
+  //   }
+  // }
 
-  bool _isMealFavorite(String id) {
-    return _favoriteMeals.any((meal) => meal.id == id);
-  }
+  // bool _isMealFavorite(String id) {
+  //   return _favoriteMeals.any((meal) => meal.id == id);
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      initialRoute: 'tab',
-      onUnknownRoute: (settings) {
-        return MaterialPageRoute(builder: (context) => CategoriesPage());
-      },
-      routes: {
-        "tab": (context) => TabPage(_favoriteMeals),
-        "categories": (context) => CategoriesPage(),
-        "category/meals": (context) => CategoryMealPage(meals),
-        "category/meals/detail": (context) => MealDetailPage(_toggleFavorite, _isMealFavorite),
-        "filters": (context) => FiltersPage(_filters, _setFilters),
-      },
-      theme: ThemeProvider.themeData(),
-      home: MyHomePage(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (ctx) => CategoriesProvider()),
+        ChangeNotifierProvider(create: (ctx) => MealsProvider())
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        initialRoute: 'tab',
+        onUnknownRoute: (settings) {
+          return MaterialPageRoute(builder: (context) => CategoriesPage());
+        },
+        routes: {
+          "tab": (context) => TabPage(),
+          "categories": (context) => CategoriesPage(),
+          "category/meals": (context) => CategoryMealPage(),
+          "category/meals/detail": (context) =>
+              MealDetailPage(),
+          "filters": (context) => FiltersPage(),
+        },
+        theme: ThemeProvider.themeData(),
+        home: MyHomePage(),
+      ),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/models/meal_model.dart';
-import 'models/category_model.dart';
+import 'package:meal_app/services/meal_model.dart';
+import 'services/category_model.dart';
 
 
 final List<Category> DUMMY_CATEGORIES =  [

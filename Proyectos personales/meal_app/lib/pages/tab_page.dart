@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/models/meal_model.dart';
+import 'package:meal_app/services/meal_model.dart';
 import 'package:meal_app/pages/categories_page.dart';
 import 'package:meal_app/widgets/app_drawer.dart';
 
 import 'favorites_page.dart';
 
 class TabPage extends StatefulWidget {
-  final List<Meal> favoriteMeals;
-  TabPage(this.favoriteMeals);
+ 
   @override
   _TabPageState createState() => _TabPageState();
 }
@@ -22,7 +21,7 @@ class _TabPageState extends State<TabPage> {
     super.initState();
     _pages = [
       {"page": CategoriesPage(), "title": 'Categories'},
-      {"page": FavoritesPage(widget.favoriteMeals), "title": 'Your Favourites'},
+      {"page": FavoritesPage(), "title": 'Your Favourites'},
     ];
   }
 

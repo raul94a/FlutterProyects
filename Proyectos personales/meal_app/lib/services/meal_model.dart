@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
+
 enum Complexity { Simple, Challenging, Hard }
 enum Affordability { Affordable, Pricey, Luxurious }
 
-class Meal {
+class Meal with ChangeNotifier {
   final String? id;
   final List<String> categories;
   final String? title;
@@ -15,6 +17,7 @@ class Meal {
   final bool isLactoseFree;
   final bool isVegan;
   final bool isVegetarian;
+  bool isFav = false;
 
   Meal(
       {required this.id,

@@ -34,22 +34,21 @@ class _TabPageState extends State<TabPage> {
   }
 
   Map<int, String> titles = {0: "Categorías", 1: "Favoritos"};
-  // void _setTitle() {
-  //   setState(() {
-  //     title = titles[_selectedPage]!;
-  //   });
-  // }
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(title)),
+        appBar: AppBar(
+          title: Text(title),
+          backgroundColor: Color.fromRGBO(106, 103, 158, 1),
+        ),
         body: _pages[_selectedPage],
         drawer: CustomDrawer(),
-        bottomNavigationBar: BuildNavigation());
+        bottomNavigationBar: _buildNavigation());
   }
 
-  BottomNavigationBar BuildNavigation() {
+  BottomNavigationBar _buildNavigation() {
     return BottomNavigationBar(
         elevation: 20,
         currentIndex: _selectedPage,
@@ -57,8 +56,8 @@ class _TabPageState extends State<TabPage> {
         selectedItemColor: Colors.amber,
         selectedIconTheme: IconThemeData(color: Colors.amber),
         selectedFontSize: 14,
-        unselectedItemColor: Colors.black54,
-        unselectedIconTheme: IconThemeData(color: Colors.black54),
+        unselectedItemColor: Colors.white,
+        unselectedIconTheme: IconThemeData(color: Colors.white),
         unselectedFontSize: 11,
         onTap: _selectedPageHandler,
         items: const [

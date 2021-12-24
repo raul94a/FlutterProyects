@@ -14,6 +14,7 @@ class _IntroPageState extends State<IntroPage> {
   }
 
   //SIMULAMOS UNA EXTRACCIÓN DE DATA DEL INTERNET
+  
   final data = [
     {"icon": Icons.ac_unit, "name": "OPCION 1"},
     {"icon": Icons.grade, "name": "OPCION 2"},
@@ -30,7 +31,10 @@ class _IntroPageState extends State<IntroPage> {
     {"icon": Icons.face, "name": "OPCION 13"},
     {"icon": Icons.bolt, "name": "OPCION 14"},
     {"icon": Icons.book, "name": "OPCION 15"},
-    {"icon": Icons.lock, "name": "OPCION 16"}
+    {
+      "icon": Icons.lock,
+      "name": "OPCION 16",
+    }
   ];
 
   @override
@@ -65,7 +69,7 @@ class _IntroPageState extends State<IntroPage> {
   Widget _titulo() {
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
@@ -114,33 +118,33 @@ class _IntroPageState extends State<IntroPage> {
         elevation: 20,
         //backgroundColor: Theme.of(context).primaryColor,
         selectedItemColor: Colors.amber,
-        selectedIconTheme: IconThemeData(color: Colors.pinkAccent),
+        selectedIconTheme: const IconThemeData(color: Colors.pinkAccent),
         selectedFontSize: 14,
         unselectedItemColor: Colors.black54,
-        unselectedIconTheme: IconThemeData(color: Colors.white),
+        unselectedIconTheme: const IconThemeData(color: Colors.white),
         onTap: _selectPage,
         unselectedFontSize: 11,
         items: [
           BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.today,
                 // color: Colors.black,
               ),
               title: Container()),
           BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.calendar_today,
                 // color: Colors.black,
               ),
               title: Container()),
           BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.bubble_chart,
                 // color: Colors.black,
               ),
               title: Container()),
           BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.supervised_user_circle,
                 // color: Colors.black,
               ),
@@ -153,13 +157,13 @@ class _IntroPageState extends State<IntroPage> {
   Widget _crearBoton(IconData icon, String name) {
     return Container(
       height: 180,
-      margin: EdgeInsets.all(15),
+      margin: const EdgeInsets.all(15),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: Color.fromRGBO(62, 66, 107, 0.7)),
+          color: const Color.fromRGBO(62, 66, 107, 0.7)),
       child: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           CircleAvatar(
@@ -167,8 +171,8 @@ class _IntroPageState extends State<IntroPage> {
             backgroundColor: Colors.pinkAccent,
             child: Icon(icon, color: Colors.white, size: 30),
           ),
-          Text('$name', style: TextStyle(color: Colors.pinkAccent)),
-          SizedBox(height: 5)
+          Text(name, style: const TextStyle(color: Colors.pinkAccent)),
+          const SizedBox(height: 5)
         ],
       ),
     );

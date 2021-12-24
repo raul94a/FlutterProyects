@@ -17,6 +17,7 @@ class CategoriesPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Categorías'),
+        backgroundColor: Color.fromRGBO(106, 103, 158, 1),
       ),
       body: _buildGridView(),
     );

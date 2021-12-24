@@ -3,6 +3,9 @@
    <application
         android:label="meal_app_2_0"
         android:icon="@mipmap/ic_launcher">
+        <!-- TODO: Add your Google Maps API key here -->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyAjQPSlYTxcw-_ba-V_ZyE4BCkkVbN5uR4"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

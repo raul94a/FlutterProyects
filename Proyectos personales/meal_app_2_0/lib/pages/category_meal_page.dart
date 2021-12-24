@@ -5,10 +5,9 @@ import '../models/meal_model.dart';
 import '../dummy_data.dart';
 import '../widgets/card_item.dart';
 
-
 class CategoryMeal extends StatelessWidget {
   final List<Meal> availableMeals;
- const CategoryMeal(this.availableMeals);
+  const CategoryMeal(this.availableMeals);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,10 @@ class CategoryMeal extends StatelessWidget {
         .toList();
 
     return Scaffold(
-        appBar: AppBar(title: Text('${category.title}')),
+        appBar: AppBar(
+          title: Text('${category.title}'),
+          backgroundColor: Color.fromRGBO(106, 103, 158, 1),
+        ),
         body: meals.isEmpty
             ? const Center(
                 child: Text('No hay recetas disponibles',

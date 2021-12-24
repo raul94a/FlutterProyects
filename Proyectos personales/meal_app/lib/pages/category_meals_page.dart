@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/models/meal_model.dart';
+import 'package:meal_app/services/meal_model.dart';
+import 'package:meal_app/services/meals_provider.dart';
 import 'package:meal_app/widgets/meal_item.dart';
+import 'package:provider/provider.dart';
 
 import '../dummy_data.dart';
 
-class CategoryMealPage extends StatefulWidget {
-  final List<Meal> _availableMeals;
-  CategoryMealPage(this._availableMeals);
-  @override
-  State<CategoryMealPage> createState() => _CategoryMealPageState();
-}
+class CategoryMealPage extends StatelessWidget {
+  // final List<Meal> _availableMeals;
+  // CategoryMealPage(this._availableMeals);
 
-class _CategoryMealPageState extends State<CategoryMealPage> {
-  String categoryTitle = '';
-  List<Meal> meals = [];
+  // String categoryTitle = '';
+  // List<Meal> meals = [];
   //por qué esté bool es necesario?
 
   /*
@@ -22,41 +20,38 @@ class _CategoryMealPageState extends State<CategoryMealPage> {
   sobreescribiría cualquier acción realizada sobre el arbol de widgets.
 
   */
-  bool loadedInitialData = false;
-  void initState() {
-    //...
-    super.initState();
-  }
+  //bool loadedInitialData = false;
 
-  @override
-  //INIT STATE SE CARGA ANTES DE QUE CONTEXT ESTÉ DISPONIBLE, DE TAL FORMA QUE ESTO DA ERROR...LA UNICA SOLUCION
-  //QUE LE VEO ES USAR ESTE ESTADO PARA CARGAR LOS ARGS Y REALIZAR LAS OPERACIONES NECESARIAS
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    if (!loadedInitialData) {
-      final Map<String, dynamic> args =
-          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-      categoryTitle = args['title'];
-      final categoryId = args['id'];
-      meals = widget._availableMeals
-          .where((meal) => meal.categories.contains(args['id']))
-          .toList();
-      loadedInitialData = true;
-    }
-  }
+  // //INIT STATE SE CARGA ANTES DE QUE CONTEXT ESTÉ DISPONIBLE, DE TAL FORMA QUE ESTO DA ERROR...LA UNICA SOLUCION
+  // //QUE LE VEO ES USAR ESTE ESTADO PARA CARGAR LOS ARGS Y REALIZAR LAS OPERACIONES NECESARIAS
+  // void didChangeDependencies() {
+  //   // TODO: implement didChangeDependencies
+  //   super.didChangeDependencies();
+  //   if (!loadedInitialData) {
+  //     final Map<String, dynamic> args =
+  //         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+  //     categoryTitle = args['title'];
+  //     final categoryId = args['id'];
+  //     meals = widget._availableMeals
+  //         .where((meal) => meal.categories.contains(args['id']))
+  //         .toList();
+  //     loadedInitialData = true;
+  //   }
+  // }
 
-  void _removeItem(String mealId) {
-    setState(() {
-      meals.removeWhere((element) => element.id == mealId);
-    });
-  }
+  // void _removeItem(String mealId) {
+  //   setState(() {
+  //     meals.removeWhere((element) => element.id == mealId);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
+    final List<Meal> meals =
+        Provider.of<MealsProvider>(context).availableMeals(args['id']);
     // final categoryMeals = DUMMY_MEALS
     //     .where((meal) => meal.categories.contains(args['id']))
     //     .toList();
@@ -69,7 +64,7 @@ class _CategoryMealPageState extends State<CategoryMealPage> {
                 itemCount: (meals).length,
                 itemBuilder: (_, index) {
                   return MealItem(
-                      removeItem: _removeItem,
+                      //removeItem: _removeItem,
                       id: meals[index].id!,
                       title: meals[index].title!,
                       imageUrl: meals[index].imageUrl!,
@@ -77,7 +72,7 @@ class _CategoryMealPageState extends State<CategoryMealPage> {
                       complexity: meals[index].complexity,
                       affordability: meals[index].affordability);
                 })
-            : Center(
+            : const Center(
                 child: Text(
                   'No hay recetas disponibles',
                   style: TextStyle(

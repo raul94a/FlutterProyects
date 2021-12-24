@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/dummy_data.dart';
-import 'package:meal_app/models/meal_model.dart';
-import 'package:meal_app/pages/categories_page.dart';
-import 'package:meal_app/pages/filters_page.dart';
-import 'package:meal_app/pages/login_page.dart';
-import 'package:meal_app/pages/splash_page.dart';
+import 'package:flutter/services.dart';
+import 'package:meal_app/services/auth.dart';
+import 'package:provider/provider.dart';
+import './dummy_data.dart';
+import './models/meal_model.dart';
+import './pages/categories_page.dart';
+import './pages/filters_page.dart';
+import './pages/google_maps_page.dart';
+import './pages/login_page.dart';
+import './pages/native_splash.dart';
+import './pages/splash_page.dart';
 
 import 'pages/category_meal_page.dart';
 import 'pages/meal_details_page.dart';
@@ -20,6 +25,9 @@ LOGICA DE FILTRADO!
 */
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top]);
   runApp(const MyApp());
 }
 
@@ -93,22 +101,38 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      initialRoute: 'splash',
-      routes: {
-        "login": (context) => LoginPage(),
-        "splash": (context) => SplashPage(),
-        "categories": (context) => CategoriesPage(),
-        "tab": (context) => TabPage(_favorites),
-        "category/meals": (context) => CategoryMeal(_availableMeals),
-        "meal-details": (context) =>
-            MealDetailPage(_isMealFavorite, _toggleFavorite),
-        "filters": (context) => FiltersPage(_filters, _setAvailableMeals),
-      },
-      theme: ThemeProvider.themeData(),
-      home: TabPage(_favorites),
-    );
+    //establecemos que el dispositivo solo use el portrait
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (ctx) => Auth()),
+        ],
+        child: Consumer<Auth>(
+            builder: (context, auth, _) => MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  debugShowMaterialGrid: false,
+                  title: 'Flutter Demo',
+                  //initialRoute: 'native',
+                  routes: {
+                    "maps": (ctx) => GoogleMapsPage(),
+                    "native": (ctx) => NativeSplash(),
+                    "login": (context) => LoginPage(),
+                    "splash": (context) => SplashPage(),
+                    "categories": (context) => CategoriesPage(),
+                    "tab": (context) => TabPage(_favorites),
+                    "category/meals": (context) =>
+                        CategoryMeal(_availableMeals),
+                    "meal-details": (context) =>
+                        MealDetailPage(_isMealFavorite, _toggleFavorite),
+                    "filters": (context) =>
+                        FiltersPage(_filters, _setAvailableMeals),
+                  },
+                  theme: ThemeProvider.themeData(),
+                  home: auth.isAuth ? TabPage(_favorites) : LoginPage(),
+                )));
   }
 }
 
@@ -116,6 +140,7 @@ class ThemeProvider {
   static ThemeData themeData() {
     return ThemeData(
         primarySwatch: Colors.pink,
+        primaryColor: Color.fromRGBO(106, 103, 178, 1),
         accentColor: Colors.amber,
         canvasColor: Color.fromRGBO(255, 254, 229, 1),
         fontFamily: 'Raleway',
@@ -131,5 +156,17 @@ class ThemeProvider {
               fontWeight: FontWeight.bold,
               fontFamily: 'RobotoCondensed',
             )));
+  }
+}
+
+class Init {
+  Init._();
+  static final instance = Init._();
+
+  Future initialize() async {
+    // This is where you can initialize the resources needed by your app while
+    // the splash screen is displayed.  Remove the following example because
+    // delaying the user experience is a bad design practice!
+    await Future.delayed(const Duration(seconds: 3));
   }
 }
